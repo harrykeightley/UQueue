@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import styles from '../styles/Queue.module.css'
-import { Paper, Typography } from '@material-ui/core';
+import { Paper, Typography, Button } from '@material-ui/core';
 
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -16,9 +16,20 @@ function Queue(props) {
 
     const [questions, setQuestions] = React.useState([]);
 
+    const generateQuestion = () => {
+        setQuestions([...questions, {name: 'Mike Phamowski', questionsAsked: 2 , time: '2'}])
+    }
+
     return (
-        <Paper elevation={2} style={{padding: '8px'}}>
-            <Typography style={{ padding: '16px'}} gutterBottom variant='h6' align='center'>{props.name}</Typography>
+        <Paper elevation={2} style={{ padding: '24px' }}>
+            <Typography style={{ padding: '8px' }} variant='h4' align='center'>{props.name}</Typography>
+
+            <Typography variant='p' gutterBottom> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</Typography>
+            <div style={{ textAlign: 'center', margin: '16px'}}>
+                <Button variant='contained' onClick={generateQuestion}>
+                    Request Help
+                </Button>
+            </div>
 
             <TableContainer>
                 <Table aria-label="customized table">
@@ -33,21 +44,19 @@ function Queue(props) {
                     </TableHead>
                     <TableBody>
                         {questions.map((question, index) => (
-                            <TableRow key={index}>
+                            <TableRow key={index + 1}>
                                 <TableCell component="th" scope="row">
-                                    {index}
+                                    {index + 1}
                                 </TableCell>
                                 <TableCell>{question.name}</TableCell>
                                 <TableCell>{question.questionsAsked}</TableCell>
+                                <TableCell>{question.time}</TableCell>
                                 <TableCell>{question.time}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            {questions.map((question, index) => (
-                <Question key={index} question={question}></Question>
-            ))}
         </Paper>
     )
 }
