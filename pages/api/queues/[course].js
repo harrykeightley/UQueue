@@ -11,9 +11,21 @@ export default (req, res) => {
 
     console.log(course, zone)
 
-    res.json([
-        {id: 1, name: 'Long ', weighting: (a, b) => 1},
-        {id: 2, name: 'Short', weighting: (a, b) => 1},
-        {id: 3, name: 'Gigantic', weighting: (a, b) => 1},
-    ])
+    if (zone === 'External') {
+        res.json([
+            {id: 1, name: 'Long ', weighting: (a, b) => 1},
+            {id: 2, name: 'Short', weighting: (a, b) => 1},
+        ])
+    } else if (zone === 'Flexible') {
+        res.json([
+            {id: 1, name: 'Flexible ', weighting: (a, b) => 1},
+            {id: 2, name: 'Short', weighting: (a, b) => 1},
+        ])
+    } else {
+        res.json([
+            {id: 1, name: 'Reee ', weighting: (a, b) => 1},
+            {id: 2, name: 'Short', weighting: (a, b) => 1},
+        ])
+    }
+    
 }

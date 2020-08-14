@@ -42,7 +42,7 @@ function Course(props) {
                 <ZoneSelector zone={zone} zones={zones} setZone={setZone} course={id} />
             </div>
             <br></br>
-            <Container maxWidth='lg'>
+            <Container maxWidth='xl'>
                 <Grid container spacing={3}>
                     {queues.map((queue) => (
                         <Grid item xs={12} md={6}>
