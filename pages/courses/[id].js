@@ -22,18 +22,18 @@ function Course(props) {
 
     const [zone, setZone] = React.useState('')
 
+    // Get initial queue data
+    const [queues, setQueues] = React.useState([])
+    React.useEffect(() => {
+        if (zone === '') {
+            return;
+        }
+        Axios.get(`/api/queues/${id}?zone=${zone}`).then(res => setQueues(res.data))
+    }, [zone])
+
     // Get queues and connect to socket
 
-    const queues = [
-        {
-            name: "Long Questions",
-            weighting: (a, b) => 1,
-        },
-        {
-            name: "Quick Questions",
-            weighting: (a, b) => 1,
-        },
-    ]
+    
 
     return (
         <div>
