@@ -1,0 +1,12 @@
+.root {
+    display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: center;
+	align-items: center;
+	align-content: stretch;
+}
+
+.search {
+    max-width: 220px;
+}
