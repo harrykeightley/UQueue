@@ -19,7 +19,7 @@ import AccessibilityIcon from '@material-ui/icons/Accessibility';
 import EmailIcon from '@material-ui/icons/Email';
 
 import io from 'socket.io-client';
-
+const TUTOR_ID = 'Harry'
 
 function Queue(props) {
 
@@ -29,13 +29,13 @@ function Queue(props) {
 
     const id = `${course}/${zone}/${name}`
 
-    
+
     const socket = io('localhost:3000')
 
     const generateQuestion = () => {
-        socket.emit('change', id, [...questions, { name: 'Mike Phamowski', questionsAsked: 2, time: '2' }])
+        socket.emit('ask', id, TUTOR_ID)
     }
-    
+
     socket.on('init', (questions) => {
         setQuestions(questions)
     })
@@ -62,7 +62,7 @@ function Queue(props) {
 
             <Typography variant='body1' gutterBottom> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</Typography>
             <div style={{ textAlign: 'center', margin: '16px' }}>
-                <Button style={{backgroundColor: '#0070f3', color: 'white'}} variant='contained' onClick={generateQuestion}>
+                <Button style={{ backgroundColor: '#0070f3', color: 'white' }} variant='contained' onClick={generateQuestion}>
                     Request Help
                 </Button>
             </div>
@@ -88,7 +88,7 @@ function Queue(props) {
                                 <TableCell>{question.questionsAsked}</TableCell>
                                 <TableCell>{question.time}</TableCell>
                                 <TableCell>
-                                    <ActionRow question={question} />
+                                    <ActionRow qid={id} question={question} socket={socket} />
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -117,18 +117,47 @@ function ActionRow(props) {
         }
     }
 
+    const { qid, socket, question } = props
+
     const data = [
-        { name: 'Check', icon: <CheckIcon />, func: () => {}, color: 'green' },
-        { name: 'Remove', icon: <ClearIcon />, func: () => {}, color: 'red' },
-        { name: 'Claim', icon: <AccessibilityIcon />, func: () => {}, color: 'orange' },
-        { name: 'Email', icon: <EmailIcon />, func: () => {}, color: '#0070f3' },
+        {
+            name: 'Check',
+            icon: <CheckIcon />,
+            func: () => {
+                socket.emit('change', qid, TUTOR_ID, { type: 'TICK', question: question })
+            },
+            color: 'green'
+        },
+        {
+            name: 'Remove',
+            icon: <ClearIcon />,
+            func: () => {
+                socket.emit('change', qid, TUTOR_ID, { type: 'REMOVE', question: question })
+            },
+            color: 'red'
+        },
+        {
+            name: 'Claim',
+            icon: <AccessibilityIcon />,
+            func: () => {
+                socket.emit('change', qid, TUTOR_ID, { type: 'CLAIM', question: question })
+            },
+            color: 'orange'
+        },
+
+        {
+            name: 'Email',
+            icon: <EmailIcon />,
+            func: () => { },
+            color: '#0070f3'
+        },
 
     ]
 
     return (
         <div style={style.root}>
             {data.map((action) => (
-                <Tooltip title={action.name}>
+                <Tooltip title={action.name} key={action.name}>
                     <IconButton onClick={action.func} style={{ color: action.color }}>
                         {action.icon}
                     </IconButton>
@@ -140,6 +169,7 @@ function ActionRow(props) {
 
 ActionRow.propTypes = {
     question: PropTypes.object.isRequired,
+    socket: PropTypes.object.isRequired
 }
 
 export default Queue

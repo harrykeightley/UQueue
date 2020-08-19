@@ -45,7 +45,7 @@ function Course(props) {
             <Container maxWidth='xl'>
                 <Grid container spacing={3}>
                     {queues.map((queue) => (
-                        <Grid item xs={12} md={6}>
+                        <Grid item xs={12} md={6} key={queue.name}>
                             <Queue course={id} zone={zone} name={queue.name} weighting={queue.weighting}></Queue>
                         </Grid>
                     ))}
