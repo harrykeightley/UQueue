@@ -46,7 +46,7 @@ function Course(props) {
                 <Grid container spacing={3}>
                     {queues.map((queue) => (
                         <Grid item xs={12} md={6}>
-                            <Queue name={queue.name} weighting={queue.weighting}></Queue>
+                            <Queue course={id} zone={zone} name={queue.name} weighting={queue.weighting}></Queue>
                         </Grid>
                     ))}
                 </Grid>

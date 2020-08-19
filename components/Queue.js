@@ -18,14 +18,43 @@ import ClearIcon from '@material-ui/icons/Clear';
 import AccessibilityIcon from '@material-ui/icons/Accessibility';
 import EmailIcon from '@material-ui/icons/Email';
 
+import io from 'socket.io-client';
+
 
 function Queue(props) {
 
+    const { course, zone, name } = props
+
     const [questions, setQuestions] = React.useState([]);
 
+    const id = `${course}/${zone}/${name}`
+
+    
+    const socket = io('localhost:3000')
+
     const generateQuestion = () => {
-        setQuestions([...questions, { name: 'Mike Phamowski', questionsAsked: 2, time: '2' }])
+        socket.emit('change', id, [...questions, { name: 'Mike Phamowski', questionsAsked: 2, time: '2' }])
     }
+    
+    socket.on('init', (questions) => {
+        setQuestions(questions)
+    })
+
+    socket.on('change', (questions) => {
+        setQuestions(questions)
+    })
+
+    // Queue connection and disconnection
+    React.useEffect(() => {
+        socket.on('connect', () => {
+            socket.emit('init', id)
+        })
+
+        return () => {
+            socket.emit('disconnect')
+            socket.off()
+        }
+    }, [props.name])
 
     return (
         <Paper elevation={2} style={{ padding: '24px' }}>
