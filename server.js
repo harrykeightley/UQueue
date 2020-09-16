@@ -32,8 +32,8 @@ function changeQueueData(qid, tutor, questionData) {
             queues[qid] = queues[qid].filter((question) => question.id !== id)
             break
         case 'CLAIM':
-            question = queues[qid].filter((question) => question.id === id)[0]
-            question.claimed = true // TODO add tutor details and toggle
+            claimedQuestion = queues[qid].filter((question) => question.id === id)[0]
+            claimedQuestion.claimed = true // TODO add tutor details and toggle
     }
 }
 
