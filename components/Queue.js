@@ -16,21 +16,20 @@ import IconButton from '@material-ui/core/IconButton';
 import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
 import AccessibilityIcon from '@material-ui/icons/Accessibility';
-import EmailIcon from '@material-ui/icons/Email';
 
 import io from 'socket.io-client';
 const TUTOR_ID = 'Harry'
 
 function Queue(props) {
 
-    const { course, zone, name } = props
+    const { course, zone, name, isTutor } = props
 
     const [questions, setQuestions] = React.useState([]);
 
     const id = `${course}/${zone}/${name}`
 
 
-    const socket = io('localhost:3000')
+    const socket = io()
 
     const generateQuestion = () => {
         socket.emit('ask', id, TUTOR_ID)
@@ -58,7 +57,8 @@ function Queue(props) {
 
     return (
         <Paper elevation={2} style={{ padding: '24px' }}>
-            <Typography style={{ padding: '8px' }} variant='h4' align='center'>{props.name}</Typography>
+            <Typography gutterBottom style={{ padding: '8px' }} variant='h4' align='center'>{props.name}</Typography>
+            {/* <h2 style={{ padding: '8px' }} align='center'>{props.name}</h2> */}
 
             <Typography variant='body1' gutterBottom> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</Typography>
             <div style={{ textAlign: 'center', margin: '16px' }}>
@@ -75,7 +75,7 @@ function Queue(props) {
                             <TableCell>Name</TableCell>
                             <TableCell>Questions Today</TableCell>
                             <TableCell>Time</TableCell>
-                            <TableCell></TableCell>
+                            {isTutor && <TableCell align="right"></TableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -87,9 +87,9 @@ function Queue(props) {
                                 <TableCell>{question.name}</TableCell>
                                 <TableCell>{question.questionsAsked}</TableCell>
                                 <TableCell>{question.time}</TableCell>
-                                <TableCell>
+                                {isTutor && <TableCell align="right">
                                     <ActionRow qid={id} question={question} socket={socket} />
-                                </TableCell>
+                                </TableCell>}
                             </TableRow>
                         ))}
                     </TableBody>
@@ -134,7 +134,7 @@ function ActionRow(props) {
             func: () => {
                 socket.emit('change', qid, TUTOR_ID, { type: 'REMOVE', question: question })
             },
-            color: 'red'
+            color: 'orange'
         },
         {
             name: 'Claim',
@@ -142,13 +142,7 @@ function ActionRow(props) {
             func: () => {
                 socket.emit('change', qid, TUTOR_ID, { type: 'CLAIM', question: question })
             },
-            color: 'orange'
-        },
-
-        {
-            name: 'Email',
-            icon: <EmailIcon />,
-            func: () => { },
+            //color: '#0070f3'
             color: '#0070f3'
         },
 
