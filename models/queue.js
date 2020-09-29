@@ -11,41 +11,10 @@ let queueSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    questions: [{
-        date: {
-            type: Date,
-            default: Date.now
-        },
-        user: {
-            name: String,
-            userName: {
-                type: String,
-                required: true,
-            },
-            email: String,
-        },
-        claimed: Boolean,
-        claimedInfo: {
-            info: String,
-            claimerEmail: String,
-        }
-    }],
     asked: {
-        user: {
-            name: String,
-            userName: {
-                type: String,
-                required: true,
-            },
-            email: String,
-            rquired: true,
-        },
-        questionsAsked: {
-            type: Number,
-            default: 0,
-            required: true,
-        }
+        type: Map,
+        of: Number
     }
 })
 
-module.exports = mongoose.Model("Queue", queueSchema)
+module.exports = mongoose.models.Queue ||mongoose.model("Queue", queueSchema)

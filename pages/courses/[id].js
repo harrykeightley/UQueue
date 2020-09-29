@@ -1,12 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Axios from 'axios'
-
-
 import styles from '../../styles/Course.module.css'
 
 import { useRouter } from 'next/router'
-import ZoneSelector from '../../components/ZoneSelector';
+import RoomSelector from '../../components/RoomSelector';
 import Queue from '../../components/Queue';
 import { Grid, Container } from '@material-ui/core';
 
@@ -14,45 +12,44 @@ function Course(props) {
     const router = useRouter()
 
     const { id } = router.query;
-    const [zones, setZones] = React.useState([])
+    const [rooms, setRooms] = React.useState([])
 
     React.useEffect(() => {
-        Axios.get(`/api/zones/${id}/`).then(res => setZones(res.data))
-    }, [])
+        Axios.get(`/api/rooms/${id}/`).then(res => setRooms(res.data))
+    }, [id])
 
-    const [zone, setZone] = React.useState('')
+    const [room, setRoom] = React.useState(null)
 
     // Get initial queue data
     const [queues, setQueues] = React.useState([])
     React.useEffect(() => {
-        if (zone === '') {
+        if (room === null) {
             return;
         }
-        Axios.get(`/api/queues/${id}?zone=${zone}`).then(res => setQueues(res.data))
-    }, [zone])
+        Axios.get(`/api/queues/${room._id}`).then(res => setQueues(res.data))
+    }, [room])
 
-    // Get queues and connect to socket
-
-    
+    // TODO remove
+    // console.log('id:', id)
+    // console.log('rooms', rooms)
+    // console.log(room)
 
     return (
         <div>
             <div className={styles.titleBar}>
                 <h2>{id}: </h2>
-                <ZoneSelector zone={zone} zones={zones} setZone={setZone} course={id} />
+                <RoomSelector room={room} rooms={rooms} setRoom={setRoom} course={id} />
             </div>
             <br></br>
             <Container maxWidth='xl'>
                 <Grid container spacing={3}>
                     {queues.map((queue) => (
                         <Grid item xs={12} md={6} key={queue.name}>
-                            <Queue course={id} zone={zone} name={queue.name} weighting={queue.weighting} isTutor={true}></Queue>
+                            <Queue queue={queue} name={queue.name} isTutor={true}></Queue>
                         </Grid>
                     ))}
                 </Grid>
             </Container>
-
-
         </div>
     )
 }

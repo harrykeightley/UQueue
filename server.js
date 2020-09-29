@@ -17,30 +17,33 @@ mongoose.connect('mongodb://localhost/uqueue', { useNewUrlParser: true })
 
 const db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', () => console.log("Connected to MongoDB successfully."))
+db.once('open', () => {
+    console.log("Connected to MongoDB successfully.")
 
-let queues = {
+})
 
+const Question = require('./models/question')
+const Queue = require('./models/queue')
+
+function broadcastQueueData(qid, socket, toAll) {
+    Question.find({ queue: qid }, (err, questions) => {
+        if (err) {
+            return console.log("Problem getting guestions from ", qid)
+        }
+        var recipients = toAll ? socket.to(qid) : socket
+        recipients.emit('change', questions)
+    })
 }
 
-function getQueueData(qid) {
-    if (queues[qid] === undefined) {
-        queues[qid] = [
-            { id: 0, name: `Wike ${qid}`, questionsAsked: 3, time: '8' },
-            { id: 1, name: 'Dick Van Dyjke', questionsAsked: 3, time: '8' }
-        ]
-    }
-    return queues[qid]
-}
-
-function changeQueueData(qid, tutor, questionData) {
+async function changeQueueData(qid, tutor, questionData) {
     const { type, question } = questionData
-    const id = question.id
+    const id = question._id
 
     switch (type) {
-        case 'REMOVE':
         case 'TICK':
-            queues[qid] = queues[qid].filter((question) => question.id !== id)
+        //Queue.findByIdAndUpdate(qid, { `asked.${question.user.email}` : question.questionsAsked + 1 })
+        case 'REMOVE':
+            Question.findByIdAndDelete(id, () => { })
             break
         case 'CLAIM':
             claimedQuestion = queues[qid].filter((question) => question.id === id)[0]
@@ -48,9 +51,35 @@ function changeQueueData(qid, tutor, questionData) {
     }
 }
 
-// placeholder
-function askQuestion(qid, user) {
-    queues[qid].push({ id: queues[qid].length, name: user, questionsAsked: 0, time: '2' })
+
+async function askQuestion(qid, user) {
+    // Check if they're already in the queue
+    let exists = false
+    Question.findOne({ queue: qid, 'user.email': user.email }, (err, question) => {
+        if (err) console.log(err)
+        if (question != null) {
+            exists = true;
+        }
+    })
+    if (exists) {
+        return
+    }
+
+    // find previous questions asked
+    let questionsAsked = 0
+    Queue.findById(qid, (err, queue) => {
+        if (user.email in queue.asked) {
+            questionsAsked = queue.asked[user.email]
+        }
+    })
+
+    Question.create({
+        queue: qid,
+        user: user,
+        claimed: false,
+        claimedInfo: {},
+        questionsAsked: questionsAsked
+    })
 }
 
 
@@ -58,20 +87,21 @@ function askQuestion(qid, user) {
 // Server sockets
 io.on('connect', socket => {
 
-    socket.on('init', (id) => {
-        socket.join(id)
-        socket.emit('init', getQueueData(id))
+    socket.on('init', (qid) => {
+        console.log("joining, ", qid)
+        socket.join(qid)
+        broadcastQueueData(qid, socket, false)
     })
 
     // TODO: Awful implementation, need to decompose into individual changes/
-    socket.on('change', (qid, tutor, questionData) => {
-        changeQueueData(qid, tutor, questionData)
-        socket.to(qid).emit('change', queues[qid])
+    socket.on('change', async (qid, tutor, questionData) => {
+        await changeQueueData(qid, tutor, questionData)
+        broadcastQueueData(qid, socket, true)
     })
 
-    socket.on('ask', (qid, user) => {
-        askQuestion(qid, user)
-        socket.to(qid).emit('change', queues[qid])
+    socket.on('ask', async (qid, user) => {
+        await askQuestion(qid, user)
+        broadcastQueueData(qid, socket, true)
     })
 })
 

@@ -22,4 +22,4 @@ let courseSchema = mongoose.Schema({
     }],
 })
 
-module.exports = mongoose.Model('Course', courseSchema);
+module.exports = mongoose.models.Course || mongoose.model('Course', courseSchema);

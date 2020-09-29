@@ -7,31 +7,32 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
 
-function ZoneSelector(props) {
+function RoomSelector(props) {
 
-    const { zone, zones, setZone } = props
+    const { room, rooms, setRoom } = props
 
     const handleChange = (event) => {
-        setZone(event.target.value)
+        var nextRoom = rooms.find((room) => room.name === event.target.value)
+        if (nextRoom !== undefined) setRoom(nextRoom)
     }
 
     return (
         <div>
             <FormControl variant="outlined" style={{ minWidth: '120px' }}>
-                <InputLabel id="demo-simple-select-outlined-label">Zone</InputLabel>
+                <InputLabel id="demo-simple-select-outlined-label">Room</InputLabel>
                 <Select
                     labelId="demo-simple-select-outlined-label"
                     id="demo-simple-select-outlined"
-                    value={zone}
+                    value={room ? room.name : ''}
                     onChange={handleChange}
                     label="Age"
                 >
-                    <MenuItem value="">
+                    <MenuItem value={null}>
                         <em>None</em>
                     </MenuItem>
 
-                    {zones.map((zone) => (
-                        <MenuItem key={zone.id} value={zone.name}>{zone.name}</MenuItem>
+                    {rooms.map((room) => (
+                        <MenuItem key={room._id} value={room.name}>{room.name}</MenuItem>
                     ))}
 
                 </Select>
@@ -41,10 +42,10 @@ function ZoneSelector(props) {
 }
 
 
-ZoneSelector.propTypes = {
-    zones: PropTypes.array.isRequired,
-    setZone: PropTypes.func.isRequired,
-    zone: PropTypes.string.isRequired
+RoomSelector.propTypes = {
+    rooms: PropTypes.array.isRequired,
+    setRoom: PropTypes.func.isRequired,
+    room: PropTypes.object
 }
 
-export default ZoneSelector
+export default RoomSelector

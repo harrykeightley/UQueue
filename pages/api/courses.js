@@ -1,10 +1,17 @@
-export default (req, res) => {
-    res.statusCode = 200
-    res.json([
-        {id: 1, title: 'CSSE1001'},
-        {id: 2, title: 'CSSE2002'},
-        {id: 3, title: 'CSSE3001'},
-        {id: 4, title: 'CSSE1004'},
-        {id: 5, title: 'CSSE1009'}
-    ])
-  }
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost/uqueue', { useNewUrlParser: true })
+
+const Course = require('../../models/course')
+
+export default async (req, res) => {
+    return new Promise(resolve => {
+        Course.find((err, courses) => {
+            if (err) {
+                res.status(500).json("Couldn't grab courses")
+                return resolve()
+            } 
+            res.status(200).json(courses)
+            return resolve()
+        })
+    })
+}

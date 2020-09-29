@@ -2,8 +2,7 @@ const mongoose = require('mongoose')
 
 let roomSchema = mongoose.Schema({
     course: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Course',
+        type: String,
         required: true,
     },
     name: {
@@ -12,4 +11,4 @@ let roomSchema = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.Model('Room', roomSchema)
+module.exports = mongoose.models.Room || mongoose.model('Room', roomSchema)

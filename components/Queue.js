@@ -20,19 +20,45 @@ import AccessibilityIcon from '@material-ui/icons/Accessibility';
 import io from 'socket.io-client';
 const TUTOR_ID = 'Harry'
 
+const getTimeDifference = (date) => {
+    const oldDate = new Date(date)
+    const newDate = new Date()
+    const timeDiff = Math.abs(newDate - oldDate)
+    const seconds = Math.ceil(timeDiff / (1000))
+
+    if (seconds < 60) {
+        return "A few seconds"
+    }
+    const minutes = Math.floor(seconds / 60)
+    if (minutes < 60) {
+        return `${minutes} minutes`
+    }
+
+    const hours = Math.floor(minutes / 60)
+    if (hours < 24) {
+        return `${hours} hours`
+    }
+
+    return 'Ages'
+}
+
 function Queue(props) {
 
-    const { course, zone, name, isTutor } = props
+    const { queue, name, isTutor } = props
 
     const [questions, setQuestions] = React.useState([]);
+    console.log('queue questions: ', questions)
 
-    const id = `${course}/${zone}/${name}`
-
-
+    const id = queue._id
     const socket = io()
 
     const generateQuestion = () => {
-        socket.emit('ask', id, TUTOR_ID)
+        let user = {
+            name: TUTOR_ID,
+            username: TUTOR_ID,
+            email: 'test@test.com'
+        }
+        socket.emit('ask', id, user)
     }
 
     socket.on('init', (questions) => {
@@ -53,7 +79,7 @@ function Queue(props) {
             socket.emit('disconnect')
             socket.off()
         }
-    }, [props.name])
+    }, [id])
 
     return (
         <Paper elevation={2} style={{ padding: '24px' }}>
@@ -84,9 +110,9 @@ function Queue(props) {
                                 <TableCell component="th" scope="row">
                                     {index + 1}
                                 </TableCell>
-                                <TableCell>{question.name}</TableCell>
+                                <TableCell>{question.user.name}</TableCell>
                                 <TableCell>{question.questionsAsked}</TableCell>
-                                <TableCell>{question.time}</TableCell>
+                                <TableCell>{getTimeDifference(question.date)}</TableCell>
                                 {isTutor && <TableCell align="right">
                                     <ActionRow qid={id} question={question} socket={socket} />
                                 </TableCell>}
@@ -100,7 +126,7 @@ function Queue(props) {
 }
 
 Queue.propTypes = {
-    weighting: PropTypes.func,
+    queue: PropTypes.object.isRequired,
     name: PropTypes.string.isRequired,
 }
 

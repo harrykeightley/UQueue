@@ -27,7 +27,7 @@ export default function Search(props) {
         if (!value) {
             return ''
         }
-        return value.title
+        return value.code
     }
 
     return (
@@ -37,12 +37,12 @@ export default function Search(props) {
                 onChange={(event, newValue) => {
                     if (typeof newValue === 'string') {
                         setValue({
-                            title: newValue,
+                            code: newValue,
                         });
                     } else if (newValue && newValue.inputValue) {
                         // Create a new value from the user input
                         setValue({
-                            title: newValue.inputValue,
+                            code: newValue.inputValue,
                         });
                     } else {
                         setValue(newValue);
@@ -55,7 +55,7 @@ export default function Search(props) {
                     if (filtered.length === 0) {
                         filtered.push({
                             inputValue: params.inputValue,
-                            title: `No results for "${params.inputValue}"`,
+                            code: `No results for "${params.inputValue}"`,
                         });
                     }
 
@@ -76,9 +76,9 @@ export default function Search(props) {
                         return option.inputValue;
                     }
                     // Regular option
-                    return option.title;
+                    return option.code;
                 }}
-                renderOption={(option) => option.title}
+                renderOption={(option) => option.code}
                 style={{ width: 300 }}
                 freeSolo
                 renderInput={(params) => (
