@@ -11,6 +11,14 @@ const PORT = 8081
 // Needed for uq nginx setup
 app.set('trust proxy', 'loopback')
 
+// Database setup
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://localhost/uqueue', { useNewUrlParser: true })
+
+const db = mongoose.connection
+db.on('error', console.error.bind(console, 'connection error:'))
+db.once('open', () => console.log("Connected to MongoDB successfully."))
+
 let queues = {
 
 }
