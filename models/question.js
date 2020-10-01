@@ -10,17 +10,20 @@ let questionSchema = mongoose.Schema({
         default: Date.now
     },
     user: {
-        name: String,
-        username: {
+        name: {
             type: String,
             required: true,
         },
-        email: String,
+        email: {
+            type: String,
+            required: true,
+        },
+        user: String,
     },
     claimed: Boolean,
     claimedInfo: {
         info: String,
-        claimerEmail: String,
+        claimer: String,
     },
     questionsAsked: {
         type: Number,

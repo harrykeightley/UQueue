@@ -45,7 +45,7 @@ function Course(props) {
                 <Grid container spacing={3}>
                     {queues.map((queue) => (
                         <Grid item xs={12} md={6} key={queue.name}>
-                            <Queue queue={queue} name={queue.name} isTutor={true}></Queue>
+                            <Queue queue={queue} name={queue.name} isTutor={props.isStaff} user={props.user}></Queue>
                         </Grid>
                     ))}
                 </Grid>
@@ -56,6 +56,28 @@ function Course(props) {
 
 Course.propTypes = {
 
+}
+
+// Pull user info from UQ SSO
+Course.getInitialProps = async (ctx) => {
+    const { id } = ctx.query;
+    let user = 'x-kvd-payload' in ctx.req.headers ?
+        ctx.req.headers['x-kvd-payload'] : {
+            user: 'testuser',
+            email: 'test@test.com',
+            name: 'Barry Beatley'
+        }
+
+    // Determine if the user is a tutor for the course
+    let isStaff = false
+    let courses = await fetch('http://localhost:8081/api/courses')
+    let json = await courses.json()
+    let course = json.find((course) => course.code === id)
+    if (course.staff.filter(member => member.email === user.email).length) {
+        isStaff = true
+    }
+
+    return { user, isStaff }
 }
 
 export default Course;
