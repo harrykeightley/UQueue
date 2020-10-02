@@ -51,7 +51,7 @@ async function generateQuestion(qid, user, socket) {
             questionsAsked: questionsAsked
         }, (err, question) => {
             if (err) console.log(err)
-            DEBUG && console.log('Created question hopefully: ', question)
+            DEBUG && console.log('Created question hopefully: ', question, user)
             broadcast(qid, socket, true) // update the queue
         })
     })
