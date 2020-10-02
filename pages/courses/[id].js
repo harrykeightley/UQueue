@@ -62,18 +62,11 @@ Course.propTypes = {
 Course.getInitialProps = async (ctx) => {
     const { id } = ctx.query;
     let user = 'x-kvd-payload' in ctx.req.headers ?
-        ctx.req.headers['x-kvd-payload'] : {
+        JSON.parse(ctx.req.headers['x-kvd-payload']) : {
             user: 'testuser',
             email: 'test@test.com',
             name: 'Barry Beatley'
         }
-    
-    // am I retarded?
-    user = {
-        user: user['user'],
-        email: user['email'],
-        name: user['name']
-    }
     
     // Determine if the user is a tutor for the course
     let isStaff = false
