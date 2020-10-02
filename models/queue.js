@@ -17,4 +17,4 @@ let queueSchema = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.models.Queue ||mongoose.model("Queue", queueSchema)
+module.exports = mongoose.models.Queue || mongoose.model("Queue", queueSchema)

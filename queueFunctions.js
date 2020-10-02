@@ -1,5 +1,6 @@
 const Question = require('./models/question')
 const Queue = require('./models/queue')
+const DEBUG = true
 
 // tell all listening sockets the current queue state
 function broadcast(qid, socket, toAll) {
@@ -54,9 +55,11 @@ async function generateQuestion(qid, user, socket) {
 
 async function askQuestion(qid, user, socket) {
     // Check if they're already in the queue
+    DEBUG && console.log('Asking a question from', user)
     Question.findOne({ queue: qid, 'user.email': user.email }, async (err, question) => {
         if (err) console.log(err)
         if (!question) {
+            DEBUG && console.log('No questions found with that email, making one')
             generateQuestion(qid, user, socket)
         }
     })
