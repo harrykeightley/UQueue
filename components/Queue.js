@@ -82,7 +82,7 @@ function Queue(props) {
             socket.emit('cya', id)
             socket.off()
         }
-    }, [])
+    }, [id])
 
     //refresh queue every second
     const [time, setTime] = React.useState(Date.now());
