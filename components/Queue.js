@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import styles from '../styles/Queue.module.css'
 import { Paper, Typography, Button, Tooltip } from '@material-ui/core';
 
-import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -82,7 +81,7 @@ function Queue(props) {
             socket.emit('cya', id)
             socket.off()
         }
-    }, [])
+    }, [id])
 
     //refresh queue every second
     const [time, setTime] = React.useState(Date.now());
