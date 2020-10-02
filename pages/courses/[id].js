@@ -70,8 +70,7 @@ Course.getInitialProps = async (ctx) => {
     
     // Determine if the user is a tutor for the course
     let isStaff = false
-    // let courses = await fetch('http://localhost:8081/api/courses')
-    let courses = await fetch('http://uqueue.uqcloud.net/api/courses')
+    let courses = await fetch('http://localhost:8081/api/courses')
     let json = await courses.json()
     let course = json.find((course) => course.code === id)
     if (course.staff.filter(member => member.email === user.email).length) {
