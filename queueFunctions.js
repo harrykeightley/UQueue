@@ -1,6 +1,6 @@
 const Question = require('./models/question')
 const Queue = require('./models/queue')
-const DEBUG = true
+const DEBUG = false
 
 // tell all listening sockets the current queue state
 function broadcast(qid, socket, toAll) {

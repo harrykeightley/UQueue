@@ -38,7 +38,6 @@ io.on('connect', socket => {
     // TODO: bad implementation, need to decompose into individual changes
     socket.on('change', async (qid, tutor, questionData) => {
         await change(qid, tutor, questionData)
-        console.log("Begin broadcast changes")
         broadcast(qid, socket, true)
     })
 
