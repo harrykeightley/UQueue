@@ -68,6 +68,13 @@ Course.getInitialProps = async (ctx) => {
             name: 'Barry Beatley'
         }
     
+    // am I retarded?
+    user = {
+        user: user['user'],
+        email: user['email'],
+        name: user['name']
+    }
+    
     // Determine if the user is a tutor for the course
     let isStaff = false
     let courses = await fetch('http://localhost:8081/api/courses')
