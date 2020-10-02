@@ -22,6 +22,7 @@ import HelpedAlert from './HelpedAlert';
 import Claimer from './Claimer';
 
 const claimedColor = '#FFF2FD'
+const socket = io()
 
 // Determine from the date, the text that appears in the time column
 const getTimeDifference = (date) => {
@@ -53,7 +54,6 @@ function Queue(props) {
     const [questions, setQuestions] = React.useState([]);
 
     const id = queue._id
-    const socket = io()
 
     const generateQuestion = () => {
         socket.emit('ask', id, user)
