@@ -31,14 +31,23 @@ io.on('connect', socket => {
         broadcast(qid, socket, false)
     })
 
+    socket.on('update', (qid) => {
+        broadcast(qid, socket, false)
+    })
+
     // TODO: bad implementation, need to decompose into individual changes
     socket.on('change', async (qid, tutor, questionData) => {
         await change(qid, tutor, questionData)
+        console.log("Begin broadcast changes")
         broadcast(qid, socket, true)
     })
 
     socket.on('ask', async (qid, user) => {
         askQuestion(qid, user, socket)
+    })
+
+    socket.on('cya', (qid) => {
+        socket.leave(qid)
     })
 })
 

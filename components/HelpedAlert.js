@@ -24,9 +24,9 @@ function HelpedAlert(props) {
 }
 
 HelpedAlert.propTypes = {
-    open: PropTypes.bool.isRequired,
-    tutor: PropTypes.string.isRequired,
-    message: PropTypes.string.isRequired,
+    open: PropTypes.bool,
+    tutor: PropTypes.string,
+    message: PropTypes.string,
 }
 
 export default HelpedAlert

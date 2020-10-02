@@ -17,12 +17,12 @@ import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
 import AccessibilityIcon from '@material-ui/icons/Accessibility';
 
-import io from 'socket.io-client';
+import { socket } from './socket';
 import HelpedAlert from './HelpedAlert';
 import Claimer from './Claimer';
 
 const claimedColor = '#FFF2FD'
-const socket = io()
+
 
 // Determine from the date, the text that appears in the time column
 const getTimeDifference = (date) => {
@@ -59,27 +59,32 @@ function Queue(props) {
         socket.emit('ask', id, user)
     }
 
-    socket.on('init', (questions) => {
-        setQuestions(questions)
-    })
-
-    socket.on('change', (questions) => {
-        setQuestions(questions)
-    })
-
     // Queue connection and disconnection
     React.useEffect(() => {
-        socket.on('connect', () => {
-            socket.emit('init', id)
+        
+        socket.on('change', ({ questions, qid }) => {
+            console.log('changes received')
+            if (qid === id) {
+                setQuestions(questions)
+            }
         })
 
+        // update state if disconnected and reconnected
+        socket.on('reconnect', () => {
+            socket.emit('update')
+        })
+
+        // broadcast that we need new info
+        socket.emit('init', id)
+
         return () => {
-            socket.emit('disconnect')
+            // socket.emit('disconnect') I think I shouldn't disconnect here.
+            socket.emit('cya', id)
             socket.off()
         }
-    }, [id])
+    }, [])
 
-    // refresh queue every second
+    //refresh queue every second
     const [time, setTime] = React.useState(Date.now());
     React.useEffect(() => {
         const interval = setInterval(() => setTime(Date.now()), 1000);
@@ -137,9 +142,9 @@ function Queue(props) {
 
             {/* Dialogue alerts */}
             <HelpedAlert
-                open={myQuestion && myQuestion.claimed}
-                message={myQuestion && myQuestion.claimed && myQuestion.claimedInfo.info}
-                tutor={myQuestion && myQuestion.claimed && myQuestion.claimedInfo.claimer}
+                open={myQuestion !== undefined && myQuestion.claimed}
+                message={myQuestion && myQuestion.claimed ? myQuestion.claimedInfo.info : ''}
+                tutor={myQuestion && myQuestion.claimed ? myQuestion.claimedInfo.claimer: ''}
             />
         </Paper>
     )
@@ -166,7 +171,7 @@ function ActionRow(props) {
         }
     }
 
-    const { qid, socket, question, user } = props
+    const { qid, question, user } = props
 
     const data = [
         {
@@ -202,7 +207,6 @@ function ActionRow(props) {
                 open={open}
                 setOpen={setOpen}
                 qid={qid}
-                socket={socket}
                 tutor={user}
             />
             {data.map((action) => (
@@ -218,7 +222,6 @@ function ActionRow(props) {
 
 ActionRow.propTypes = {
     question: PropTypes.object.isRequired,
-    socket: PropTypes.object.isRequired
 }
 
 export default Queue

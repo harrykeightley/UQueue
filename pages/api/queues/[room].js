@@ -10,16 +10,16 @@ export default async (req, res) => {
     } = req
 
     // Create some dummy data
-    await Queue.findOne({room: room}, (err, queue) => {
-        if (!queue) {
-            var q = new Queue({
-                room: room, 
-                name: 'Long Questions',
-                asked: {}
-            })
-            q.save()    
-        }
-    })
+    // await Queue.findOne({room: room}, (err, queue) => {
+    //     if (!queue) {
+    //         var q = new Queue({
+    //             room: room, 
+    //             name: 'Long Questions',
+    //             asked: {}
+    //         })
+    //         q.save()    
+    //     }
+    // })
 
     return new Promise((resolve, reject) => {
         Queue.find({room: room}, (err, queues) => {

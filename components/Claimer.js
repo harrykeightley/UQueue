@@ -7,10 +7,12 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from 'prop-types'
+import { socket } from './socket';
+
 
 function Claimer(props) {
 
-    const { tutor, question, open, setOpen, socket, qid } = props
+    const { tutor, question, open, setOpen, qid } = props
 
     const [info, setInfo] = React.useState("")
 
@@ -59,12 +61,11 @@ function Claimer(props) {
 }
 
 Claimer.propTypes = {
-    qid: PropTypes.object,
-    socket: PropTypes.object.isRequired,
-    tutor: PropTypes.object.isRequired,
-    question: PropTypes.object.isRequired,
-    open: PropTypes.bool.isRequired,
-    setOpen: PropTypes.func.isRequired
+    qid: PropTypes.string,
+    tutor: PropTypes.object,
+    question: PropTypes.object,
+    open: PropTypes.bool,
+    setOpen: PropTypes.func
 }
 
 export default Claimer

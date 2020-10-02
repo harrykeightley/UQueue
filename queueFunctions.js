@@ -8,8 +8,12 @@ function broadcast(qid, socket, toAll) {
         if (err) {
             return console.log("Problem getting guestions from ", qid)
         }
-        var recipients = toAll ? socket.to(qid) : socket
-        recipients.emit('change', questions)
+
+        if (toAll) {
+            socket.to(qid).emit('change', { questions, qid })
+        }
+        socket.emit('change', { questions, qid })
+        console.log('The sockets rooms: ', socket.rooms)
     })
 }
 
@@ -32,13 +36,13 @@ async function change(qid, tutor, questionData) {
         case 'CLAIM':
             await Question.findByIdAndUpdate(id, { claimed: true, claimedInfo: question.claimedInfo }, () => { })
     }
+
+    DEBUG && console.log("Making change: ", type, question)
 }
 
 async function generateQuestion(qid, user, socket) {
     // find previous questions asked
     Queue.findById(qid, (err, queue) => {
-        DEBUG && console.log('Finding queue with id: ', qid)
-
         let questionsAsked = 0
         if (queue.asked.has(user.user)) {
             questionsAsked = queue.asked.get(user.user)
@@ -63,7 +67,6 @@ async function askQuestion(qid, user, socket) {
     Question.findOne({ queue: qid, 'user.email': user.email }, async (err, question) => {
         if (err) console.log(err)
         if (!question) {
-            DEBUG && console.log('No questions found with that email, making one')
             generateQuestion(qid, user, socket)
         }
     })
