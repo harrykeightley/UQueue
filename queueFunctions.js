@@ -37,6 +37,8 @@ async function change(qid, tutor, questionData) {
 async function generateQuestion(qid, user, socket) {
     // find previous questions asked
     Queue.findById(qid, (err, queue) => {
+        DEBUG && console.log('Finding queue with id: ', qid)
+
         let questionsAsked = 0
         if (queue.asked.has(user.user)) {
             questionsAsked = queue.asked.get(user.user)
@@ -48,6 +50,7 @@ async function generateQuestion(qid, user, socket) {
             claimedInfo: {},
             questionsAsked: questionsAsked
         }, () => {
+            DEBUG && console.log('Created question hopefully')
             broadcast(qid, socket, true) // update the queue
         })
     })
