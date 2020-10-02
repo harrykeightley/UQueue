@@ -13,7 +13,6 @@ function broadcast(qid, socket, toAll) {
             socket.to(qid).emit('change', { questions, qid })
         }
         socket.emit('change', { questions, qid })
-        console.log('The sockets rooms: ', socket.rooms)
     })
 }
 

@@ -19,6 +19,7 @@ import AccessibilityIcon from '@material-ui/icons/Accessibility';
 import { socket } from './socket';
 import HelpedAlert from './HelpedAlert';
 import Claimer from './Claimer';
+import { defaultSort } from '../helpers/queueSorts';
 
 const claimedColor = '#FFF2FD'
 
@@ -60,9 +61,8 @@ function Queue(props) {
 
     // Queue connection and disconnection
     React.useEffect(() => {
-        
+
         socket.on('change', ({ questions, qid }) => {
-            console.log('changes received')
             if (qid === id) {
                 setQuestions(questions)
             }
@@ -103,7 +103,7 @@ function Queue(props) {
             <Typography gutterBottom style={{ padding: '8px' }} variant='h4' align='center'>{props.name}</Typography>
             {/* <h2 style={{ padding: '8px' }} align='center'>{props.name}</h2> */}
 
-            <Typography variant='body1' gutterBottom> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</Typography>
+            <Typography variant='body1' align='center' gutterBottom> {queue.description} </Typography>
             <div style={{ textAlign: 'center', margin: '16px' }}>
                 <Button style={{ backgroundColor: '#0070f3', color: 'white' }} variant='contained' onClick={generateQuestion}>
                     Request Help
@@ -122,7 +122,7 @@ function Queue(props) {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {questions.map((question, index) => (
+                        {questions.sort(defaultSort).map((question, index) => (
                             <TableRow key={index + 1} style={question.claimed ? { backgroundColor: claimedColor } : {}}>
                                 <TableCell component="th" scope="row">
                                     {index + 1}
@@ -143,7 +143,7 @@ function Queue(props) {
             <HelpedAlert
                 open={myQuestion !== undefined && myQuestion.claimed}
                 message={myQuestion && myQuestion.claimed ? myQuestion.claimedInfo.info : ''}
-                tutor={myQuestion && myQuestion.claimed ? myQuestion.claimedInfo.claimer: ''}
+                tutor={myQuestion && myQuestion.claimed ? myQuestion.claimedInfo.claimer : ''}
             />
         </Paper>
     )

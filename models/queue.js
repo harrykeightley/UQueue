@@ -11,6 +11,10 @@ let queueSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    description: {
+        type: String,
+        default: '',
+    },
     asked: {
         type: Map,
         of: Number

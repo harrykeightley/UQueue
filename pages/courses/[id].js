@@ -16,7 +16,7 @@ function Course(props) {
 
     React.useEffect(() => {
         Axios.get(`/api/rooms/${id}/`).then(res => setRooms(res.data))
-    }, [id])
+    }, [])
 
     const [room, setRoom] = React.useState(null)
 
@@ -28,11 +28,6 @@ function Course(props) {
         }
         Axios.get(`/api/queues/${room._id}`).then(res => setQueues(res.data))
     }, [room])
-
-    // TODO remove
-    // console.log('id:', id)
-    // console.log('rooms', rooms)
-    // console.log(room)
 
     return (
         <div>
@@ -73,7 +68,7 @@ Course.getInitialProps = async (ctx) => {
     let courses = await fetch('http://localhost:8081/api/courses')
     let json = await courses.json()
     let course = json.find((course) => course.code === id)
-    if (course.staff.filter(member => member.email === user.email).length) {
+    if (course.staff.filter(member => member.user === user.user).length) {
         isStaff = true
     }
 

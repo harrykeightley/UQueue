@@ -11,7 +11,7 @@ let courseSchema = mongoose.Schema({
         required: true,
     },
     staff: [{
-        email: {
+        user: {
             type: String, 
             required: true
         },
