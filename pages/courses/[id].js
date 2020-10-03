@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import RoomSelector from '../../components/RoomSelector';
 import Queue from '../../components/Queue';
 import { Grid, Container, Typography } from '@material-ui/core';
+import { socket } from '../../components/socket'
 
 function Course(props) {
     const router = useRouter()
@@ -28,6 +29,8 @@ function Course(props) {
         Axios.get(`/api/queues/${room._id}`)
         .then(res => setQueues(res.data))
         .catch(err => console.log(err))
+
+        return () => socket.off() // reset the socket's listeners
     }, [room])
 
     return (

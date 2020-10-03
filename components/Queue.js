@@ -72,11 +72,8 @@ function Queue(props) {
         // broadcast that we need new info
         socket.emit('init', id)
 
-        return () => {
-            // socket.emit('disconnect') I think I shouldn't disconnect here.
-            socket.emit('cya', id)
-            socket.off()
-        }
+        return () => socket.emit('cya', id)
+        
     }, [id, queue.room])
 
     //refresh queue every second
