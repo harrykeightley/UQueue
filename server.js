@@ -28,6 +28,8 @@ const { broadcast, change, askQuestion } = require('./helpers/queueFunctions')
 io.on('connect', socket => {
     socket.on('init', (qid) => {
         socket.join(qid)
+        console.log("Sending initial queue information for ", qid)
+        console.log("That socket is now listening in these rooms:", socket.rooms)
         broadcast(qid, socket, false)
     })
 
