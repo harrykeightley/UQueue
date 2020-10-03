@@ -75,6 +75,7 @@ function Queue(props) {
 
         // broadcast that we need new info
         socket.emit('init', id)
+        console.log("Gimme dat data foo (id: ", id)
 
         return () => {
             // socket.emit('disconnect') I think I shouldn't disconnect here.

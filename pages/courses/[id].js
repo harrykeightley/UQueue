@@ -1,5 +1,4 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import Axios from 'axios'
 import styles from '../../styles/Course.module.css'
 
@@ -36,9 +35,8 @@ function Course(props) {
             <div className={styles.titleBar}>
                 <h2>{id}: </h2>
                 <RoomSelector room={room} rooms={rooms} setRoom={setRoom} course={id} />
-
-
             </div>
+
             {/* Extra label when a room hasn't been selected */}
             {room === null &&
                 <Typography display='initial' align='center' variant='body1'>
@@ -46,21 +44,18 @@ function Course(props) {
                 </Typography>
             }
             <br></br>
+
             <Container maxWidth='xl'>
                 <Grid container spacing={3}>
                     {queues.map((queue) => (
                         <Grid item xs={12} md={6} key={queue.name}>
-                            <Queue queue={queue} name={queue.name} isTutor={props.isStaff} user={props.user}></Queue>
+                            <Queue queue={queue} name={queue.name} isTutor={props.isStaff} user={props.user} />
                         </Grid>
                     ))}
                 </Grid>
             </Container>
         </div>
     )
-}
-
-Course.propTypes = {
-
 }
 
 // Pull user info from UQ SSO
