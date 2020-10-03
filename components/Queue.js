@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-import styles from '../styles/Queue.module.css'
 import { Paper, Typography, Button, Tooltip } from '@material-ui/core';
 
 import Table from '@material-ui/core/Table';
@@ -50,18 +49,15 @@ const getTimeDifference = (date) => {
 function Queue(props) {
 
     const { queue, isTutor, user } = props
-
-    const [questions, setQuestions] = React.useState([]);
-
     const id = queue._id
 
+    const [questions, setQuestions] = React.useState([]);
     const generateQuestion = () => {
         socket.emit('ask', id, user)
     }
 
     // Queue connection and disconnection
     React.useEffect(() => {
-
         socket.on('change', ({ questions, qid }) => {
 	    console.table(queue.name, "event id: ", qid, "actual id: ", id)
             if (qid === id) {
