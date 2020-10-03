@@ -1,6 +1,7 @@
 import React from 'react'
 import Axios from 'axios'
 import styles from '../../styles/Course.module.css'
+import Head from 'next/head'
 
 import { useRouter } from 'next/router'
 import RoomSelector from '../../components/RoomSelector';
@@ -27,14 +28,18 @@ function Course(props) {
             return;
         }
         Axios.get(`/api/queues/${room._id}`)
-        .then(res => setQueues(res.data))
-        .catch(err => console.log(err))
+            .then(res => setQueues(res.data))
+            .catch(err => console.log(err))
 
         return () => socket.off() // reset the socket's listeners
     }, [room])
 
     return (
         <div>
+            <Head>
+                <title>{id} Queue</title>
+                <meta property="og:title" content={id + " Queue"} key="title" />
+            </Head>
             <div className={styles.titleBar}>
                 <h2>{id}: </h2>
                 <RoomSelector room={room} rooms={rooms} setRoom={setRoom} course={id} />
