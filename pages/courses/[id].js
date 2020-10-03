@@ -26,7 +26,9 @@ function Course(props) {
         if (room === null) {
             return;
         }
-        Axios.get(`/api/queues/${room._id}`).then(res => setQueues(res.data))
+        Axios.get(`/api/queues/${room._id}`)
+        .then(res => setQueues(res.data))
+        .catch(err => console.log(err))
     }, [room])
 
     return (
