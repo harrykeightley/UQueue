@@ -1,3 +1,11 @@
+/** 
+ * Important functions that get called when data changes on the queues. 
+ * 
+ * The general idea is that they'll make a database query and respond by broad-
+ * casting the most updated queue data to all sockets which required it for that
+ * specific queue.
+ */
+
 const Question = require('../models/question')
 const Queue = require('../models/queue')
 const DEBUG = false

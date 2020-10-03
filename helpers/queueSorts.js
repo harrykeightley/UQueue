@@ -1,4 +1,6 @@
-// sort by questions asked and then date
+// Functions that determine how the queue data is sorted.
+
+// Old sort: Sort by questions asked and then time
 export const defaultSort = (a, b) => {
     if (a.questionsAsked < b.questionsAsked) {
         return -1

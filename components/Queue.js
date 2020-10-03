@@ -59,7 +59,6 @@ function Queue(props) {
     // Queue connection and disconnection
     React.useEffect(() => {
         socket.on('change', ({ questions, qid }) => {
-	    console.table(queue.name, "event id: ", qid, "actual id: ", id)
             if (qid === id) {
                 setQuestions(questions)
             }
@@ -72,8 +71,6 @@ function Queue(props) {
 
         // broadcast that we need new info
         socket.emit('init', id)
-        console.log("Gimme dat data foo queue:", queue.name, "id:", id)
-
         return () => socket.emit('cya', id)
         
     }, [id, queue.room])
