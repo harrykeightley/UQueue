@@ -1,5 +1,5 @@
-const Question = require('./models/question')
-const Queue = require('./models/queue')
+const Question = require('../models/question')
+const Queue = require('../models/queue')
 const DEBUG = false
 
 // tell all listening sockets the current queue state

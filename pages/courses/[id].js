@@ -6,7 +6,7 @@ import styles from '../../styles/Course.module.css'
 import { useRouter } from 'next/router'
 import RoomSelector from '../../components/RoomSelector';
 import Queue from '../../components/Queue';
-import { Grid, Container } from '@material-ui/core';
+import { Grid, Container, Typography } from '@material-ui/core';
 
 function Course(props) {
     const router = useRouter()
@@ -34,7 +34,15 @@ function Course(props) {
             <div className={styles.titleBar}>
                 <h2>{id}: </h2>
                 <RoomSelector room={room} rooms={rooms} setRoom={setRoom} course={id} />
+
+
             </div>
+            {/* Extra label when a room hasn't been selected */}
+            {room === null &&
+                <Typography display='initial' align='center' variant='body1'>
+                    Select a room from the drop-down menu above.
+                </Typography>
+            }
             <br></br>
             <Container maxWidth='xl'>
                 <Grid container spacing={3}>
@@ -62,7 +70,7 @@ Course.getInitialProps = async (ctx) => {
             email: 'test@test.com',
             name: 'Barry Beatley'
         }
-    
+
     // Determine if the user is a tutor for the course
     let isStaff = false
     let courses = await fetch('http://localhost:8081/api/courses')

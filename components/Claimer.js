@@ -32,7 +32,7 @@ function Claimer(props) {
 
     return (
         question && <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+            <DialogTitle id="form-dialog-title">Claim</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     Enter the text the student will see when claimed:

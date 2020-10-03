@@ -22,7 +22,7 @@ db.once('open', () => {
 })
 
 // Queue functions
-const {broadcast, change, askQuestion} = require('./queueFunctions')
+const { broadcast, change, askQuestion } = require('./helpers/queueFunctions')
 
 // Server sockets
 io.on('connect', socket => {
