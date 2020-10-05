@@ -11,7 +11,9 @@ var tutors = [
 	uqjmor24,
 	uqmpham6,
 	uqkbart5,
-].map(username => {user: username, role: 'tutor'});
+].map(username => {
+	return { user: username, role: 'tutor'}
+});
 
 conn = new Mongo()
 db = conn.getDB('uqueue')
