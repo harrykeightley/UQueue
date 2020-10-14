@@ -81,7 +81,7 @@ Course.getInitialProps = async (ctx) => {
     let courses = await fetch('http://localhost:8081/api/courses')
     let json = await courses.json()
     let course = json.find((course) => course.code === id)
-    if (course.staff.filter(member => member.user === user.user).length) {
+    if (course !== undefined && course.staff.filter(member => member.user === user.user).length) {
         isStaff = true
     }
 
