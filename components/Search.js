@@ -1,23 +1,21 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
 import Link from 'next/link';
 
 import styles from '../styles/Search.module.css'
 
-
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete';
 import Axios from 'axios';
 import SearchIcon from '@material-ui/icons/Search';
-
+import { useRouter } from 'next/router'
 
 const filter = createFilterOptions();
 
 export default function Search(props) {
-
-
     const [value, setValue] = React.useState('');
     const [courses, setCourses] = React.useState([]);
+
+    const router = useRouter()
 
     React.useEffect(() => {
         Axios.get('/api/courses').then(res => setCourses(res.data))
@@ -34,6 +32,11 @@ export default function Search(props) {
         <div style={{ marginTop: '1.2em' }}>
             <Autocomplete
                 value={value}
+                onKeyPress={(e) => {
+                    if (e.key == 'Enter') {
+                        router.push(`/courses/${getCourse(value)}`)
+                    }
+                }}
                 onChange={(event, newValue) => {
                     if (typeof newValue === 'string') {
                         setValue({
@@ -62,7 +65,7 @@ export default function Search(props) {
                     return filtered;
                 }}
                 selectOnFocus
-                clearOnBlur
+                // clearOnBlur
                 handleHomeEndKeys
                 id="free-solo-with-text-demo"
                 options={courses}
@@ -86,7 +89,7 @@ export default function Search(props) {
 
                         <Link href={`/courses/${getCourse(value)}`}>
                             <a>
-                                <SearchIcon fontSize='large' style={{ marginRight: '0.5rem ' }} />
+                                <SearchIcon fontSize='large' style={{ marginRight: '0.5rem', color: value ? '#0070f3': 'black' }} />
                             </a>
                         </Link>
                         <TextField  {...params} label="Enter Course Code" variant="outlined" />
