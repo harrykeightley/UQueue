@@ -57,7 +57,7 @@ function Course(props) {
                 <Grid container spacing={3}>
                     {queues.map((queue) => (
                         <Grid item xs={12} md={6} key={queue.name}>
-                            <Queue queue={queue} name={queue.name} isTutor={props.isStaff} user={props.user} />
+                            <Queue queue={queue} name={queue.name} isTutor={props.isStaff} user={props.user} course={id} />
                         </Grid>
                     ))}
                 </Grid>
@@ -73,7 +73,7 @@ Course.getInitialProps = async (ctx) => {
         JSON.parse(ctx.req.headers['x-kvd-payload']) : {
             user: 'testuser',
             email: 'test@test.com',
-            name: 'Barry Beatley'
+            name: "shouldn't exist"
         }
 
     // Determine if the user is a tutor for the course

@@ -14,6 +14,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CheckIcon from '@material-ui/icons/Check';
 import ClearIcon from '@material-ui/icons/Clear';
 import AccessibilityIcon from '@material-ui/icons/Accessibility';
+import BlockIcon from '@material-ui/icons/Block';
 
 import { socket } from './socket';
 import HelpedAlert from './HelpedAlert';
@@ -48,7 +49,7 @@ const getTimeDifference = (date) => {
 
 function Queue(props) {
 
-    const { queue, isTutor, user } = props
+    const { queue, isTutor, user, course } = props
     const id = queue._id
 
     const [questions, setQuestions] = React.useState([]);
@@ -72,12 +73,18 @@ function Queue(props) {
         // broadcast that we need new info
         socket.emit('init', id)
         return () => socket.emit('cya', id)
-        
+
     }, [id, queue.room])
 
-    //refresh queue every second
+
     const [time, setTime] = React.useState(Date.now());
     React.useEffect(() => {
+        // Ask for permission for notifications
+        if ("Notification" in window) {
+            Notification.requestPermission();
+        }
+
+        //refresh queue every second
         const interval = setInterval(() => setTime(Date.now()), 1000);
         return () => {
             clearInterval(interval);
@@ -85,10 +92,17 @@ function Queue(props) {
     }, []);
 
     const isMyQuestion = (question) => {
-        return user.email === question.user.email
+        return user.user === question.user.user
     }
 
     const myQuestion = questions.find(question => question.user.user === user.user)
+
+    // Notify when I get a question
+    React.useEffect(() => {
+        if (myQuestion !== undefined && myQuestion.claimed) {
+            new Notification(`A ${course} tutor has messaged you!`, {icon: '/favicon.ico'})
+        }
+    }, [myQuestion && myQuestion.claimed])
 
     return (
         <Paper elevation={2} style={{ padding: '24px' }}>
@@ -96,8 +110,13 @@ function Queue(props) {
             {/* <h2 style={{ padding: '8px' }} align='center'>{props.name}</h2> */}
 
             <Typography variant='body1' align='center' gutterBottom> {queue.description} </Typography>
+
             <div style={{ textAlign: 'center', margin: '16px' }}>
-                <Button style={{ backgroundColor: '#0070f3', color: 'white' }} variant='contained' onClick={generateQuestion}>
+                <Button
+                    style={myQuestion === undefined ? { backgroundColor: '#0070f3', color: 'white' } : {}}
+                    disabled={myQuestion !== undefined}
+                    onClick={generateQuestion}
+                    variant='contained'>
                     Request Help
                 </Button>
             </div>
@@ -119,7 +138,9 @@ function Queue(props) {
                                 <TableCell component="th" scope="row">
                                     {index + 1}
                                 </TableCell>
-                                <TableCell style={isMyQuestion(question) ? { fontWeight: 'bold' } : {}}>{question.user.name}</TableCell>
+                                <TableCell style={isMyQuestion(question) ? { fontWeight: 'bold' } : {}}>
+                                    {question.user.name == '__redacted__' ? question.user.user : question.user.name}
+                                </TableCell>
                                 <TableCell>{question.questionsAsked}</TableCell>
                                 <TableCell>{getTimeDifference(question.date)}</TableCell>
                                 {isTutor && <TableCell align="right">
@@ -164,6 +185,29 @@ function ActionRow(props) {
 
     const { qid, question, user } = props
 
+    // TODO eventually refactor this to use username instead of name since tutors can have duplicate names.
+    const studentClaimedByMe = question.claimed && question.claimedInfo.claimer === user.name
+
+    const claim = () => {
+        if (!question.claimed) {
+            setOpen(true)
+        } else if (studentClaimedByMe) {
+            // Unclaim the student
+            socket.emit('change', qid, user, { type: 'UNCLAIM', question: question })
+        }
+    }
+
+    const claimToolTip = () => {
+        if (!question.claimed) {
+            return 'Claim'
+        } else if (studentClaimedByMe) {
+            return 'Unclaim'
+        } else {
+            return `Claimed by ${question.claimedInfo.claimer}`
+        }
+
+    }
+
     const data = [
         {
             name: 'Check',
@@ -182,14 +226,14 @@ function ActionRow(props) {
             color: 'orange'
         },
         {
-            name: 'Claim',
-            icon: <AccessibilityIcon />,
-            func: () => { setOpen(true) },
-            //color: '#0070f3'
-            color: '#0070f3'
+            name: claimToolTip(),
+            icon: studentClaimedByMe ? <BlockIcon /> : <AccessibilityIcon />,
+            func: claim,
+            color: question.claimed && !studentClaimedByMe ? 'grey' : '#0070f3'
         },
 
     ]
+
 
     return (
         <div style={style.root}>
