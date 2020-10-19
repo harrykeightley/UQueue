@@ -23,6 +23,11 @@ export default function Nav() {
                 open={isMenuOpen}
                 onClose={handleMenuClose}
             >
+                <a href='https://api.uqcloud.net/auth/consent/https://uqueue.uqcloud.net/'>
+                    <MenuItem>
+                        Reset Permissions
+                    </MenuItem>
+                </a>
                 <a href='https://api.uqcloud.net/logout/'>
                     <MenuItem>
                         Sign out
