@@ -20,15 +20,20 @@ function Course(props) {
     }, [])
 
     const [room, setRoom] = React.useState(null)
+    const [queues, setQueues] = React.useState([])
+    // Block students from asking a question if they're on another queue in the room
+    const [queueBlocker, setQueueBlocker] = React.useState([])
 
     // Get initial queue data
-    const [queues, setQueues] = React.useState([])
     React.useEffect(() => {
         if (room === null) {
             return;
         }
         Axios.get(`/api/queues/${room._id}`)
-            .then(res => setQueues(res.data))
+            .then(res => {
+                setQueues(res.data)
+                setQueueBlocker([...res.data].fill(false))
+            })
             .catch(err => console.log(err))
 
         return () => socket.off() // reset the socket's listeners
@@ -40,6 +45,7 @@ function Course(props) {
                 <title>{id} Queue</title>
                 <meta property="og:title" content={id + " Queue"} key="title" />
             </Head>
+
             <div className={styles.titleBar}>
                 <h2>{id}: </h2>
                 <RoomSelector room={room} rooms={rooms} setRoom={setRoom} course={id} />
@@ -55,9 +61,21 @@ function Course(props) {
 
             <Container maxWidth='xl'>
                 <Grid container spacing={3}>
-                    {queues.map((queue) => (
+                    {queues.map((queue, index) => (
                         <Grid item xs={12} md={6} key={queue.name}>
-                            <Queue queue={queue} name={queue.name} isTutor={props.isStaff} user={props.user} course={id} />
+                            <Queue
+                                queue={queue}
+                                name={queue.name}
+                                isTutor={props.isStaff}
+                                user={props.user}
+                                course={id}
+                                block={(value) => {
+                                    var blockers = [...queueBlocker]
+                                    blockers[index] = value
+                                    setQueueBlocker(blockers)
+                                }}
+                                isBlocked={queueBlocker.length === queues.length && queueBlocker.some(value => value)}
+                            />
                         </Grid>
                     ))}
                 </Grid>

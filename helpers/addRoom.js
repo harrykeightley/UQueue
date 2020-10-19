@@ -1,5 +1,5 @@
 const course = 'CSSE1001'
-const roomName = 'In Person'
+const roomName = 'Online'
 
 conn = new Mongo()
 db = conn.getDB('uqueue')

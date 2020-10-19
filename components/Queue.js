@@ -49,7 +49,7 @@ const getTimeDifference = (date) => {
 
 function Queue(props) {
 
-    const { queue, isTutor, user, course } = props
+    const { queue, isTutor, user, course, isBlocked, block } = props
     const id = queue._id
 
     const [questions, setQuestions] = React.useState([]);
@@ -79,7 +79,7 @@ function Queue(props) {
 
     const [time, setTime] = React.useState(Date.now());
     React.useEffect(() => {
-        // Ask for permission for notifications
+        // Notification permission setup
         if ("Notification" in window) {
             Notification.requestPermission();
         }
@@ -104,6 +104,11 @@ function Queue(props) {
         }
     }, [myQuestion && myQuestion.claimed])
 
+    // Update queue blocked status whenever question changes
+    React.useEffect(() => {
+        block(myQuestion !== undefined)
+    }, [myQuestion === undefined])
+
     return (
         <Paper elevation={2} style={{ padding: '24px' }}>
             <Typography gutterBottom style={{ padding: '8px' }} variant='h4' align='center'>{props.name}</Typography>
@@ -113,8 +118,8 @@ function Queue(props) {
 
             <div style={{ textAlign: 'center', margin: '16px' }}>
                 <Button
-                    style={myQuestion === undefined ? { backgroundColor: '#0070f3', color: 'white' } : {}}
-                    disabled={myQuestion !== undefined}
+                    style={!isBlocked ? { backgroundColor: '#0070f3', color: 'white' } : {}}
+                    disabled={isBlocked}
                     onClick={generateQuestion}
                     variant='contained'>
                     Request Help
@@ -167,6 +172,9 @@ Queue.propTypes = {
     name: PropTypes.string.isRequired,
 }
 
+/**
+ * The actionbar only visible to tutors
+ */
 function ActionRow(props) {
 
     // If the tutor claim dialogue is open or not
@@ -208,6 +216,7 @@ function ActionRow(props) {
 
     }
 
+    // The individual buttons that appear on the action bar and what they should do
     const data = [
         {
             name: 'Check',
