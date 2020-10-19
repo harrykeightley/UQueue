@@ -41,7 +41,23 @@ async function change(qid, tutor, questionData) {
             await Question.findByIdAndDelete(id, () => { })
             break
         case 'CLAIM':
-            await Question.findByIdAndUpdate(id, { claimed: true, claimedInfo: question.claimedInfo }, () => { })
+            await Question.findById(id, (err, dbQuestion) => {
+                if (err) console.log(err);
+
+                if (!dbQuestion.claimed) {
+                    dbQuestion.claimed = true,
+                    dbQuestion.claimedInfo = question.claimedInfo
+                    dbQuestion.save()
+                } else if (DEBUG) {
+                    console.log("Question already claimed by another tutor: ", dbQuestion.claimedInfo.claimer)
+                }
+            });
+            // Old claim TODO delete once sure this works
+            // await Question.findByIdAndUpdate(id, { claimed: true, claimedInfo: question.claimedInfo }, () => { })
+            break
+        case 'UNCLAIM':
+            await Question.findByIdAndUpdate(id, { claimed: false, claimedInfo: {}}, () => { })
+
     }
 
     DEBUG && console.log("Making change: ", type, question)
@@ -71,7 +87,7 @@ async function generateQuestion(qid, user, socket) {
 async function askQuestion(qid, user, socket) {
     // Check if they're already in the queue
     DEBUG && console.log('Asking a question from', user)
-    Question.findOne({ queue: qid, 'user.email': user.email }, async (err, question) => {
+    Question.findOne({ queue: qid, 'user.user': user.user }, async (err, question) => {
         if (err) console.log(err)
         if (!question) {
             generateQuestion(qid, user, socket)

@@ -2,3 +2,4 @@
 conn = new Mongo()
 db = conn.getDB('uqueue')
 db.queues.updateMany({}, {$set: {asked: {}}})
+db.questions.deleteMany({})
