@@ -16,6 +16,9 @@ var tutors = [
 	"uqjarno4",
 	"uqjluong",
 	"uqjstore",
+	"uqedelor",
+	"uqrbahl",
+	"uqcphil8",
 ].map(username => {
 	return { user: username, role: 'tutor'}
 });
